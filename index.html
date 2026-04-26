@@ -1,0 +1,154 @@
+<\!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Double Events — מפת כנסים ישראל 2026</title>
+<style>
+  :root { color-scheme: light; --pink:#F0059A; --pink-light:#ff40b8; --pink-pale:#fce7f3; --black:#0a0a0a; }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',Arial,sans-serif;background:#f5f5f7;color:#111;min-height:100vh;direction:rtl}
+  .header{background:var(--black);color:white;padding:16px 24px 14px;position:sticky;top:0;z-index:100;box-shadow:0 2px 16px rgba(0,0,0,.5)}
+  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;gap:12px}
+  .logo-lockup{display:flex;align-items:center;gap:12px}
+  .brand-text{display:flex;flex-direction:column;line-height:1}
+  .brand-name{font-size:22px;font-weight:900;letter-spacing:-.5px;color:white}
+  .brand-name span{color:var(--pink)}
+  .brand-sub{font-size:10px;color:rgba(255,255,255,.45);letter-spacing:2px;text-transform:uppercase;margin-top:3px}
+  .header-meta{display:flex;flex-direction:column;align-items:flex-end;gap:4px}
+  .last-updated{font-size:11px;background:rgba(255,255,255,.08);padding:3px 10px;border-radius:20px;white-space:nowrap;color:rgba(255,255,255,.6)}
+  .conf-count{font-size:11px;color:var(--pink);font-weight:700}
+  .filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .search-box{flex:1;min-width:160px;padding:7px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.07);color:white;font-size:13px;outline:none;direction:rtl;transition:border-color .2s}
+  .search-box:focus{border-color:var(--pink)}
+  .search-box::placeholder{color:rgba(255,255,255,.35)}
+  .filter-btn{padding:6px 13px;border-radius:20px;border:1.5px solid rgba(255,255,255,.15);background:transparent;color:rgba(255,255,255,.65);font-size:11.5px;cursor:pointer;transition:all .2s;white-space:nowrap}
+  .filter-btn:hover{border-color:var(--pink);color:var(--pink-light)}
+  .filter-btn.active{background:var(--pink);color:white;border-color:var(--pink);font-weight:700}
+  .filter-btn.new-filter{border-color:rgba(240,5,154,.4);color:var(--pink-light)}
+  .filter-btn.new-filter.active{background:var(--pink);color:white}
+  .stats-bar{background:white;padding:9px 24px;display:flex;gap:20px;align-items:center;border-bottom:1px solid #e8e8e8;flex-wrap:wrap}
+  .stat{font-size:12px;color:#888}
+  .stat strong{color:#111;font-size:16px;margin-left:3px;font-weight:800}
+  .stat.new-stat strong{color:var(--pink)}
+  .content{padding:14px 20px}
+  .section-header{display:flex;align-items:center;gap:10px;margin:20px 0 11px;padding-bottom:8px;border-bottom:2px solid}
+  .section-header .dot{width:12px;height:12px;border-radius:50%;flex-shrink:0}
+  .section-header h2{font-size:15px;font-weight:800}
+  .section-header .count{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600}
+  .section-header .new-count{font-size:10px;padding:2px 8px;border-radius:10px;background:var(--pink-pale);color:var(--pink);font-weight:700}
+  .cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:10px;margin-bottom:6px}
+  .card{background:white;border-radius:12px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.07);border-right:4px solid;transition:transform .15s,box-shadow .15s;position:relative}
+  .card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(0,0,0,.1)}
+  .card.is-new{box-shadow:0 0 0 2px var(--pink),0 1px 4px rgba(0,0,0,.07)}
+  .card.is-new:hover{box-shadow:0 0 0 2px var(--pink),0 5px 16px rgba(0,0,0,.1)}
+  .new-ribbon{position:absolute;top:10px;left:10px;background:var(--pink);color:white;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:6px;display:flex;align-items:center;gap:4px;z-index:2}
+  .new-dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.7);animation:blink 1.4s ease-in-out infinite}
+  @keyframes blink{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.6)}}
+  .card.is-major::after{content:'⭐ בכיר';position:absolute;top:8px;left:10px;font-size:9px;background:#fff7ed;color:#92400e;padding:2px 6px;border-radius:6px;font-weight:700}
+  .card.is-new.is-major::after{top:34px}
+  .card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px;gap:6px}
+  .card h3{font-size:13.5px;font-weight:700;line-height:1.4;flex:1}
+  .badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:700;white-space:nowrap;flex-shrink:0}
+  .badge.upcoming{background:#dcfce7;color:#166534}
+  .badge.soon{background:#fef9c3;color:#854d0e}
+  .badge.passed{background:#f3f4f6;color:#9ca3af}
+  .badge.tbd{background:#f5f3ff;color:#5b21b6}
+  .card-detail{font-size:11.5px;color:#777;margin-bottom:4px;display:flex;align-items:center;gap:5px}
+  .card-detail .icon{font-size:12px;flex-shrink:0}
+  .card-desc{font-size:11.5px;color:#555;margin-top:7px;line-height:1.5}
+  .card-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+  .tag{font-size:10px;padding:2px 7px;border-radius:5px;background:#f5f5f7;color:#555}
+  .found-date{font-size:10px;color:var(--pink);margin-top:6px;font-weight:700}
+  .card-link{display:inline-block;margin-top:8px;font-size:11px;color:var(--pink);text-decoration:none;font-weight:700}
+  .card-link:hover{text-decoration:underline}
+  .hidden{display:none\!important}
+  .section-wrapper.hidden{display:none}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-top">
+    <div class="logo-lockup">
+      <svg width="42" height="42" viewBox="0 0 42 42" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="21" cy="21" r="21" fill="#F0059A"/>
+        <ellipse cx="21" cy="21" rx="7" ry="19" fill="#0a0a0a" transform="rotate(-15 21 21)"/>
+      </svg>
+      <div class="brand-text">
+        <div class="brand-name">Double <span>Events</span></div>
+        <div class="brand-sub">Israel Conference Intelligence · 2026</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="last-updated" id="lastUpdated">עודכן: 26.04.2026</div>
+      <div class="conf-count" id="confCountHeader">31 כנסים במאגר</div>
+    </div>
+  </div>
+  <div class="filters">
+    <input class="search-box" type="text" id="searchInput" placeholder="🔍  חיפוש לפי שם, מיקום, מארגן..." oninput="filterCards()">
+    <button class="filter-btn active" onclick="setTopic(this,'all')">הכל</button>
+    <button class="filter-btn" onclick="setTopic(this,'hr')">👥 HR</button>
+    <button class="filter-btn" onclick="setTopic(this,'cyber')">🛡️ סייבר</button>
+    <button class="filter-btn" onclick="setTopic(this,'ai')">🤖 AI</button>
+    <button class="filter-btn" onclick="setTopic(this,'energy')">⚡ אנרגיה</button>
+    <button class="filter-btn" onclick="setTopic(this,'bio')">🔬 ביולוגיה</button>
+    <button class="filter-btn" onclick="setTopic(this,'realestate')">🏢 נדל"ן</button>
+    <button class="filter-btn" onclick="setTopic(this,'upcoming_only')">⏳ עתידיים</button>
+    <button class="filter-btn new-filter" onclick="setTopic(this,'new_only')">✨ חדשים השבוע</button>
+  </div>
+</div>
+<div class="stats-bar">
+  <div class="stat"><strong id="totalCount">0</strong>מוצגים</div>
+  <div class="stat new-stat"><strong id="newCount">0</strong>✨ חדשים השבוע</div>
+  <div class="stat"><strong id="soonCount">0</strong>🔥 קרובים</div>
+  <div class="stat"><strong id="upcomingCount">0</strong>עתידיים</div>
+  <div class="stat"><strong id="passedCount">0</strong>עברו</div>
+</div>
+<div class="content" id="mainContent"></div>
+<script>
+const TODAY=new Date('2026-04-26'),WEEK_AGO=new Date(TODAY.getTime()-7*86400000);
+const conferences=[
+  {id:1,topic:'hr',major:true,foundDate:'2026-04-19',name:'ועידת HR2026 — הוועידה השנתית למשאבי אנוש',date:'2026-01-21',ddisp:'21 ינואר 2026',loc:'אקספו תל אביב, ביתן 10',org:'HRCE',tags:['גיוס','רווחת עובד','יחסי עבודה','HR Tech','תערוכה'],url:'https://www.hrce.co.il/',desc:'האירוע הגדול של קהילת ה-HR בישראל — 4 מסלולי תוכן ותערוכת ספקים. כניסה חינם לבעלי תפקיד.'},
+  {id:2,topic:'hr',major:false,foundDate:'2026-04-19',name:'יריד משאבי אנוש — חדשנות ורווחת עובדים',date:'2026-06-23',ddisp:'23 יוני 2026',loc:'אקספו תל אביב',org:'HTF',tags:['רווחת עובד','חדשנות','נטוורקינג'],url:'https://www.htf.co.il/',desc:'יריד מקצועי המפגיש מנהלי HR, ספקים ומנהלים ארגוניים. פגישות B2B.'},
+  {id:3,topic:'hr',major:false,foundDate:'2026-04-26',name:'ועידת הגיוס השנתית של ישראל 2026',date:'2026-09-01',ddisp:'ספטמבר 2026 (TBD)',loc:'תל אביב',org:'HR Portal',tags:['Talent Acquisition','גיוס','AI בגיוס'],url:'https://www.hrportal.co.il/gius2026/',desc:'700 מקצועני גיוס ו-HR ממאות ארגונים. AI, דאטה ומגמות.'},
+  {id:4,topic:'hr',major:false,foundDate:'2026-04-19',name:'פסטיבל משאבי אנוש — HRus Festival',date:'2026-09-06',ddisp:'ספטמבר 2026 (TBD)',loc:'תל אביב',org:'HRus',tags:['פסטיבל','קהילה','רווחה','גיוס'],url:'https://con.hrus.co.il/festival-2026/',desc:'3 כנסים במקביל: HR שנתי, גיוס, ורווחה — באירוע אחד גדול.'},
+  {id:5,topic:'hr',major:false,foundDate:'2026-04-26',name:'HR Next — כנס מנהיגות וניהול משאבי אנוש',date:'2026-10-27',ddisp:'אוקטובר 2026 (TBD)',loc:'קראון פלאזה תל אביב',org:'HRH',tags:['מנהיגות','עתיד העבודה','HR Tech'],url:'https://www.hrh.co.il/',desc:'כנס שנתי למנהיגות HR — מגמות עולם העבודה החדש.'},
+  {id:6,topic:'hr',major:false,foundDate:'2026-04-26',name:'ועידת הוועדים בישראל 2026',date:'2026-05-15',ddisp:'מאי 2026 (TBD)',loc:'ישראל',org:'Veadim',tags:['ועדי עובדים','יחסי עבודה'],url:'https://www.veadim.co.il/',desc:'כנס ויריד ועדי עובדים — כלים, זכויות ורגולציה.'},
+  {id:7,topic:'hr',major:false,foundDate:'2026-04-26',name:'כנס עבודה ושוק ההון האנושי — כלכליסט',date:'2026-06-01',ddisp:'יוני 2026 (TBD)',loc:'תל אביב',org:'כלכליסט',tags:['שוק העבודה','People Analytics','AI ב-HR'],url:'https://www.calcalist-conferences-2026.co.il/',desc:'AI בקבלת החלטות HR, גיוס ושימור בעידן הדיגיטלי.'},
+  {id:8,topic:'cyber',major:true,foundDate:'2026-04-26',name:'Cybertech Global Tel Aviv 2026',date:'2026-01-26',ddisp:'26–28 ינואר 2026',loc:'אקספו תל אביב',org:'Cybertech / ראל"ב',tags:['CISO','Enterprise','Startups','תערוכה','בינ"ל'],url:'https://www.cybertechisrael.com/',desc:'הכנס הסייבר הגדול בעולם — 18,000 משתתפים, 200 תוצגנים.'},
+  {id:9,topic:'cyber',major:false,foundDate:'2026-04-19',name:'ועידת ישראל לסיכוני סייבר 2026',date:'2026-05-27',ddisp:'27 מאי 2026',loc:'קראון פלאזה תל אביב',org:'CED',tags:['CISO','ניהול סיכונים','AI Security'],url:'https://www.ced.co.il/',desc:'מיפוי נוף האיומים 2026. למנכ"לים, CISO, CTO ומנהלי סיכונים.'},
+  {id:10,topic:'cyber',major:true,foundDate:'2026-04-26',name:'Israel Cyber Week 2026 — אוניברסיטת ת"א',date:'2026-06-22',ddisp:'22–25 יוני 2026',loc:'אוניברסיטת תל אביב',org:'TAU / ICRC',tags:['Cyber','AI','ממשלות','תעשייה','בינ"ל'],url:'https://cyberweektau.com/',desc:'הפורום הגלובלי המוביל. 4 ימים, מאות הרצאות, עם AI Week מקביל.'},
+  {id:11,topic:'cyber',major:false,foundDate:'2026-04-19',name:'ISC 2026 — כנס האבטחה של ישראל',date:'2026-07-01',ddisp:'1 יולי 2026',loc:'ביתן 10, אקספו תל אביב',org:'ISC Israel',tags:['אבטחה פיזית','סייבר','תשתיות'],url:'https://www.isc-israel.co.il/',desc:'כנס האבטחה הגדול בישראל — תערוכה ובכירי הענף.'},
+  {id:12,topic:'ai',major:true,foundDate:'2026-04-26',name:'Israel AI Week 2026 — אוניברסיטת ת"א',date:'2026-06-24',ddisp:'24 יוני 2026',loc:'אוניברסיטת תל אביב',org:'TAU / ICRC',tags:['Generative AI','AI Policy','Enterprise AI'],url:'https://ai-week.com/',desc:'ה-Plenary הראשי של AI Week — מקביל ל-Cyber Week.'},
+  {id:13,topic:'ai',major:false,foundDate:'2026-04-19',name:'כנס "בינה ונתונים" השנתי — ה-6',date:'2026-06-10',ddisp:'יוני 2026 (TBD)',loc:'ישראל',org:'AEAI / לשכת המהנדסים',tags:['Data Science','ML','תעשייה-אקדמיה'],url:'https://www.aeai.org.il/activity/intelligence-and-data-conference/',desc:'חיבור תעשייה ואקדמיה, ML ו-Data Science.'},
+  {id:14,topic:'ai',major:false,foundDate:'2026-04-26',name:'כנס מערכות אוטונומיות — לשכת המהנדסים',date:'2026-05-01',ddisp:'מאי 2026 (TBD)',loc:'ישראל',org:'AEAI',tags:['Autonomous Systems','רובוטיקה','AI תעשייתי'],url:'https://www.aeai.org.il/activity/ausr-conference/',desc:'מערכות אוטונומיות ורובוטיקה בתעשייה, ביטחון וחדשנות.'},
+  {id:15,topic:'ai',major:false,foundDate:'2026-04-19',name:'Microsoft Israel AI Innovation Day',date:'2026-05-19',ddisp:'19–20 מאי 2026',loc:'תל אביב',org:'Microsoft Israel',tags:['AI Agents','Copilot','Enterprise'],url:'https://www.microsoft.com/he-il/events',desc:'סוכני AI דור הבא, אוטומציה ארגונית. פורמט היברידי.'},
+  {id:16,topic:'energy',major:true,foundDate:'2026-04-26',name:'כנס אילת-אילות לאנרגיה מתחדשת — ה-11',date:'2026-01-20',ddisp:'20–22 ינואר 2026',loc:'מלון דן אילת',org:'Eilat-Eilot',tags:['סולאר','רוח','אחסון','מדיניות','בינ"ל'],url:'https://he.eilatenergy.org/',desc:'הפורום המרכזי לאנרגיה מתחדשת — יעדי 2030, בכירי ממשלה ותעשייה.'},
+  {id:17,topic:'energy',major:false,foundDate:'2026-04-19',name:'כנס התחזיות במשק האנרגיה 2026',date:'2026-05-20',ddisp:'מאי 2026',loc:'תל אביב',org:'המכון הישראלי לאנרגיה',tags:['תחזיות','מחירי אנרגיה','סולאר'],url:'https://energy.org.il/',desc:'תחזיות שוק, מחירי אנרגיה וחידושים בסולאר ורשת החשמל.'},
+  {id:18,topic:'energy',major:false,foundDate:'2026-04-26',name:'SMART ENERGY — כנס האנרגיה ה-10',date:'2026-06-15',ddisp:'יוני 2026 (TBD)',loc:'ישראל',org:'EnergyCom',tags:['Smart Grid','IoT','אנרגיה ירוקה'],url:'https://energycom.org.il/events/',desc:'אנרגיה חכמה, רשתות דור הבא ואחסון.'},
+  {id:19,topic:'energy',major:false,foundDate:'2026-04-26',name:'הועידה הבינלאומית לאנרגיה ועסקים',date:'2026-07-01',ddisp:'יולי 2026 (TBD)',loc:'תל אביב',org:'Energy Convention',tags:['ביטחון אנרגטי','Carbon Tax','בינ"ל'],url:'https://energy-convention.com/en/',desc:'ביטחון אנרגטי, מס פחמן ואנרגיה ירוקה.'},
+  {id:20,topic:'energy',major:false,foundDate:'2026-04-26',name:'ENERGY 2025–2050 — כנס תשתיות האנרגיה',date:'2026-09-15',ddisp:'ספטמבר 2026 (TBD)',loc:'מוזיאון ארץ ישראל, ת"א',org:'ENERGY2050',tags:['תשתיות','2050','קיימות'],url:'https://www.energy2050.co.il/',desc:'ראייה ארוכת טווח לתשתיות אנרגיה בישראל עד 2050.'},
+  {id:21,topic:'bio',major:true,foundDate:'2026-04-26',name:'MIXiii Health-Tech.IL 2026',date:'2026-03-17',ddisp:'17–18 מרץ 2026',loc:'ICC ירושלים',org:'IATI',tags:['MedTech','Biotech','Digital Health','בינ"ל'],url:'https://mixiii.com/',desc:'השבוע הבינ"ל ל-Life Sciences ו-Health-Tech — תחרויות, תערוכה ו-B2B.'},
+  {id:22,topic:'bio',major:true,foundDate:'2026-04-19',name:'Biomed Israel 2026 — שבוע Life Sciences',date:'2026-05-12',ddisp:'12–14 מאי 2026',loc:'מלון דייויד אינטרקונטיננטל, ת"א',org:'Kenes / IATI',tags:['Life Sciences','Pharma','Medical Devices','בינ"ל'],url:'https://kenes-exhibitions.com/biomed/',desc:'ה-24 לשבוע Life Sciences — ביוטק, פארמה ומכשור רפואי.'},
+  {id:23,topic:'bio',major:false,foundDate:'2026-04-19',name:'הוועידה השנתית למדע ולסביבה — ISEES',date:'2026-07-08',ddisp:'יולי 2026',loc:'ישראל',org:'ISEES',tags:['מדע','ביולוגיה','סביבה'],url:'https://conference.isees.org.il/hp/',desc:'ביולוגיה, שימור ומדיניות סביבתית. רישום עד 24.6.'},
+  {id:24,topic:'bio',major:false,foundDate:'2026-04-19',name:'כנסי BiofForum — ביורגולציה ואיכות',date:'2026-06-01',ddisp:'לאורך 2026',loc:'ישראל',org:'BiofForum',tags:['GMP','FDA','רגולציה','מחקר קליני'],url:'https://bioforum.org.il/en/',desc:'GMP, FDA, מחקר קליני ומכשירים רפואיים.'},
+  {id:25,topic:'realestate',major:true,foundDate:'2026-04-26',name:'ועידת ישראל לנדל"ן ותשתיות — גלובס',date:'2026-03-02',ddisp:'2 מרץ 2026',loc:'תל אביב',org:'גלובס',tags:['נדל"ן מסחרי','שוק משרדים','ייזום','השקעות'],url:'https://www.globes.co.il/news/home.aspx?fid=16234',desc:'ועידת נדל"ן שנתית בכירה — שרים, מנכ"לים ויזמים.'},
+  {id:26,topic:'realestate',major:false,foundDate:'2026-04-19',name:'כנס ניהול ותפעול נכסי נדל"ן ה-5',date:'2026-05-15',ddisp:'מאי 2026',loc:'ישראל',org:'מרכז הבנייה הישראלי',tags:['Property Management','FM','תחזוקה'],url:'https://www.building.org.il/events/2026-2/',desc:'קהילת ניהול הנכסים — אחזקה ותפעול בניינים ומתחמים.'},
+  {id:27,topic:'realestate',major:false,foundDate:'2026-04-26',name:'כנס תשתיות לעתיד 2026 — גלובס',date:'2026-06-15',ddisp:'יוני 2026 (TBD)',loc:'מרכז הכנסים הבורסה',org:'גלובס',tags:['תשתיות','תחבורה','תעשייה'],url:'https://www.globes.co.il/news/%D7%9B%D7%A0%D7%A1_%D7%AA%D7%A9%D7%AA%D7%99%D7%95%D7%AA_%D7%9C%D7%A2%D7%AA%D7%99%D7%93_2026.tag',desc:'פרויקטי התשתית שיניעו את ישראל — תחבורה, תעשייה, אנרגיה.'},
+  {id:28,topic:'realestate',major:false,foundDate:'2026-04-26',name:'כנס מערכות אלומיניום וזכוכית בבנייה',date:'2026-07-02',ddisp:'2 יולי 2026',loc:'ישראל',org:'מרכז הבנייה הישראלי',tags:['אלומיניום','זכוכית','בנייה רוויה'],url:'https://www.building.org.il/conferences/',desc:'מערכות אלומיניום, זכוכיות וחיפויים בבנייה רוויה.'},
+  {id:29,topic:'realestate',major:false,foundDate:'2026-04-26',name:'כנס חדשנות ותיעוש הבנייה ה-2',date:'2026-09-01',ddisp:'ספטמבר 2026 (TBD)',loc:'ישראל',org:'מרכז הבנייה הישראלי',tags:['חדשנות','תיעוש','BIM'],url:'https://www.building.org.il/events/2026-2/',desc:'תיעוש, BIM, בנייה מודולרית וטכנולוגיות עתידיות.'},
+  {id:30,topic:'realestate',major:false,foundDate:'2026-04-19',name:'ועידת עיר הנדל"ן אילת 2026',date:'2026-10-01',ddisp:'אוקטובר 2026 (TBD)',loc:'אילת',org:'מרכז הבנייה הישראלי',tags:['נדל"ן','ייזום','מימון'],url:'https://www.building.org.il/',desc:'ועידת נדל"ן שנתית באילת — ייזום, מימון וקבלנים.'},
+  {id:31,topic:'realestate',major:false,foundDate:'2026-04-26',name:'ועידת תשתיות ותעשייה — Summit Experts',date:'2026-09-15',ddisp:'ספטמבר 2026 (TBD)',loc:'ישראל',org:'SE / Summit Experts',tags:['תשתיות','תעשייה','נדל"ן עסקי'],url:'https://www.se.zone/en/',desc:'כנסים עסקיים בנדל"ן, בנייה ותשתיות.'}
+];
+const topicConfig={hr:{label:'👥 משאבי אנוש ורווחה',color:'#6366f1'},cyber:{label:'🛡️ סייבר וטכנולוגיה',color:'#ef4444'},ai:{label:'🤖 בינה מלאכותית',color:'#8b5cf6'},energy:{label:'⚡ אנרגיה ואנרגיה מתחדשת',color:'#f59e0b'},bio:{label:'🔬 ביולוגיה וביוכימיה',color:'#10b981'},realestate:{label:'🏢 נדל"ן וניהול נכסים',color:'#3b82f6'}};
+let activeTopic='all';
+const isNew=d=>new Date(d)>=WEEK_AGO;
+function getStatus(s){const d=(new Date(s)-TODAY)/86400000;if(d<0)return{cls:'passed',label:'✓ עבר'};if(d<=45)return{cls:'soon',label:'🔥 קרוב\!'};return{cls:'upcoming',label:'⏳ מתקרב'};}
+function fmtDate(d){const dt=new Date(d);return`${String(dt.getDate()).padStart(2,'0')}.${String(dt.getMonth()+1).padStart(2,'0')}.${dt.getFullYear()}`;}
+function filterCards(){const q=document.getElementById('searchInput').value.toLowerCase().trim();let total=0,newC=0,soon=0,upcoming=0,passed=0;document.querySelectorAll('.section-wrapper').forEach(sec=>{const isU=activeTopic==='upcoming_only',isN=activeTopic==='new_only',tMatch=['all','upcoming_only','new_only'].includes(activeTopic)||activeTopic===sec.dataset.topic;let vis=0;sec.querySelectorAll('.card').forEach(card=>{const st=card.dataset.status,nw=card.dataset.isnew==='true',ok=tMatch&&(\!isU||st==='soon'||st==='upcoming')&&(\!isN||nw)&&(\!q||card.dataset.search.includes(q));card.classList.toggle('hidden',\!ok);if(ok){vis++;total++;if(nw)newC++;if(st==='soon')soon++;else if(st==='upcoming')upcoming++;else if(st==='passed')passed++;}});sec.classList.toggle('hidden',vis===0);const cnt=sec.querySelector('.count');if(cnt)cnt.textContent=vis;const ncnt=sec.querySelector('.new-count');if(ncnt){const sN=[...sec.querySelectorAll('.card:not(.hidden)')].filter(c=>c.dataset.isnew==='true').length;ncnt.style.display=sN>0?'':'none';ncnt.textContent=`✨ ${sN} חדש`;}});document.getElementById('totalCount').textContent=total;document.getElementById('newCount').textContent=newC;document.getElementById('soonCount').textContent=soon;document.getElementById('upcomingCount').textContent=upcoming;document.getElementById('passedCount').textContent=passed;document.getElementById('confCountHeader').textContent=total+' כנסים במאגר';}
+function setTopic(btn,topic){document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');activeTopic=topic;filterCards();}
+function render(){const container=document.getElementById('mainContent');container.innerHTML='';['hr','cyber','ai','energy','bio','realestate'].forEach(topic=>{const cfg=topicConfig[topic],c=cfg.color,items=conferences.filter(x=>x.topic===topic).sort((a,b)=>new Date(a.date)-new Date(b.date)),sN=items.filter(x=>isNew(x.foundDate)).length;const wrap=document.createElement('div');wrap.className='section-wrapper';wrap.dataset.topic=topic;wrap.innerHTML=`<div class="section-header" style="border-color:${c}"><div class="dot" style="background:${c}"></div><h2 style="color:${c}">${cfg.label}</h2><span class="count" style="background:${c}22;color:${c}">${items.length}</span><span class="new-count" style="display:${sN>0?'':'none'}">✨ ${sN} חדש</span></div><div class="cards-grid"></div>`;container.appendChild(wrap);const grid=wrap.querySelector('.cards-grid');items.forEach(conf=>{const st=getStatus(conf.date),nw=isNew(conf.foundDate),card=document.createElement('div');card.className=`card${conf.major?' is-major':''}${nw?' is-new':''}`;card.style.borderColor=c;card.dataset.status=st.cls;card.dataset.isnew=nw?'true':'false';card.dataset.search=`${conf.name} ${conf.loc} ${conf.org} ${conf.tags.join(' ')} ${conf.desc}`.toLowerCase();card.innerHTML=`${nw?'<div class="new-ribbon"><span class="new-dot"></span>חדש השבוע</div>':''}<div class="card-top" style="${nw?'margin-top:24px':''}"><h3>${conf.name}</h3><span class="badge ${st.cls}">${st.label}</span></div><div class="card-detail"><span class="icon">📅</span>${conf.ddisp}</div><div class="card-detail"><span class="icon">📍</span>${conf.loc}</div><div class="card-detail"><span class="icon">🏛️</span>${conf.org}</div><p class="card-desc">${conf.desc}</p><div class="card-tags">${conf.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>${nw?`<div class="found-date">✨ נמצא ב-${fmtDate(conf.foundDate)}</div>`:''}<a class="card-link" href="${conf.url}" target="_blank">לאתר הכנס ←</a>`;grid.appendChild(card);});});}
+render();
+</script>
+</body>
+</html>
